@@ -36,14 +36,14 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".activity.TakePhotoActivity"
+            android:name=".page.TakePhotoActivity"
             android:exported="false" >
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
-            android:name=".SelectImageActivity"
+            android:name=".activity.SelectImageActivity"
             android:exported="false" >
             <meta-data
                 android:name="android.app.lib_name"

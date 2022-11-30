@@ -1,4 +1,4 @@
-package com.example.image_picker
+package com.example.image_picker.activity
 
 import android.content.ContentUris
 import android.content.Intent
@@ -16,6 +16,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
+import com.example.image_picker.R
 import com.example.image_picker.model.Image
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -25,7 +27,7 @@ import kotlinx.coroutines.launch
 interface OnSelectedChange{
     fun onSelect(position: Int)
 }
-class SelectImageActivity : AppCompatActivity(),OnSelectedChange {
+class SelectImageActivity : AppCompatActivity(), OnSelectedChange {
     lateinit var recyclerView: RecyclerView
     lateinit var btn_cancel: Button
     lateinit var btn_confirm: Button
@@ -116,7 +118,7 @@ class SelectImageActivity : AppCompatActivity(),OnSelectedChange {
     }
 
 
-    inner class GridAdapter(var onChange:OnSelectedChange, temp:List<Image>): RecyclerView.Adapter<ViewHolder>() {
+    inner class GridAdapter(var onChange: OnSelectedChange, temp:List<Image>): RecyclerView.Adapter<ViewHolder>() {
         private var selected:MutableList<Image> = temp.toMutableList()
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -136,7 +138,8 @@ class SelectImageActivity : AppCompatActivity(),OnSelectedChange {
                 }
                 onChange.onSelect(position)
             }
-            Glide.with(applicationContext).load(Uri.parse(address[position].uri)).into(holder.imageView);
+            Glide.with(applicationContext).load(Uri.parse(address[position].uri)).apply(
+                RequestOptions.fitCenterTransform()).into(holder.imageView);
         }
 
         override fun getItemCount(): Int {
@@ -155,7 +158,11 @@ class SelectImageActivity : AppCompatActivity(),OnSelectedChange {
     }
 
     override fun onSelect(position: Int) {
-        selected.add(address[position])
+        if(selected.contains(address[position])){
+            selected.remove(address[position])
+        }else {
+            selected.add(address[position])
+        }
 
     }
 }
