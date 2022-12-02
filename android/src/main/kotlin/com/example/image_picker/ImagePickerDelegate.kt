@@ -3,16 +3,13 @@ package com.example.image_picker
 import android.Manifest
 import android.app.Activity
 import android.app.Activity.RESULT_OK
-import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
-import android.provider.MediaStore
 import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.content.FileProvider
-import com.example.image_picker.activity.SelectImageActivity
+import com.example.image_picker.page.SelectImageActivity
 import com.example.image_picker.page.TakePhotoActivity
 import com.example.image_picker.util.SelectImageUtil
 import io.flutter.plugin.common.MethodCall

@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activity.SelectImageActivity">
+    android:background="@color/Primary"
+    tools:context=".page.SelectImageActivity">
 
     <LinearLayout
         android:id="@+id/linearLayout"
@@ -12,14 +13,17 @@
         android:layout_height="50dp"
         android:gravity="left"
         android:orientation="horizontal"
+        android:background="@color/PrimaryBar"
+        android:paddingHorizontal="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <Button
+        <TextView
             android:id="@+id/cancel_select_image_button"
             android:layout_width="wrap_content"
             android:layout_height="48dp"
+            android:textColor="@color/Primary"
             android:layout_gravity="center_vertical"
             android:gravity="start|center_vertical"
             android:text="Cancel" />
@@ -28,10 +32,11 @@
             android:layout_weight="1"
             android:layout_height="48dp"/>
 
-        <Button
+        <TextView
             android:id="@+id/confirm_select_image_button"
             android:layout_width="wrap_content"
             android:layout_height="48dp"
+            android:textColor="@color/Primary"
             android:layout_gravity="center_vertical|end"
             android:gravity="right|center_vertical"
             android:text="Confirm" />
@@ -42,6 +47,7 @@
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:padding="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

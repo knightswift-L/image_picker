@@ -43,7 +43,7 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".activity.SelectImageActivity"
+            android:name=".page.SelectImageActivity"
             android:exported="false" >
             <meta-data
                 android:name="android.app.lib_name"
