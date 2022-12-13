@@ -3,7 +3,6 @@ package com.example.image_picker.page
 import android.content.Context
 import android.content.Intent
 import android.content.res.Resources
-import android.hardware.Camera.ACTION_NEW_PICTURE
 import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Build
@@ -20,14 +19,10 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.core.content.ContextCompat
 import androidx.core.net.toFile
-import androidx.core.view.WindowCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.LifecycleOwner
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.image_picker.R
-import com.google.common.util.concurrent.ListenableFuture
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -41,7 +36,7 @@ class TakePhotoActivity : AppCompatActivity(),CameraXConfig.Provider {
     private lateinit var cameraProvider : ProcessCameraProvider
     private lateinit var previewView:PreviewView
     private lateinit var thumbnail:ImageView
-    private lateinit var btn_take_photo: Button
+    private lateinit var btnTakePhoto: Button
     private lateinit var imageCapture:ImageCapture
     private lateinit var cameraExecutor: ExecutorService
     private lateinit var outputDirectory: File
@@ -74,9 +69,9 @@ class TakePhotoActivity : AppCompatActivity(),CameraXConfig.Provider {
         setContentView(R.layout.activity_take_photo)
          val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
         previewView = findViewById(R.id.previewView)
-        btn_take_photo = findViewById(R.id.take_photo)
+        btnTakePhoto = findViewById(R.id.take_photo)
         thumbnail = findViewById(R.id.thumbtail)
-        btn_take_photo.isEnabled = false
+        btnTakePhoto.isEnabled = false
         cameraExecutor = Executors.newSingleThreadExecutor()
         outputDirectory = getOutputDirectory(this)
         previewView.post {
@@ -90,13 +85,9 @@ class TakePhotoActivity : AppCompatActivity(),CameraXConfig.Provider {
                 bindPreview(cameraProvider)
             }, ContextCompat.getMainExecutor(this))
         }
-        btn_take_photo.setOnClickListener{
+        btnTakePhoto.setOnClickListener{
             captureImage()
         }
-    }
-
-    private fun hideSystemUI() {
-        WindowCompat.setDecorFitsSystemWindows(window, false)
     }
 
     private fun bindPreview(cameraProvider : ProcessCameraProvider) {
@@ -130,10 +121,10 @@ class TakePhotoActivity : AppCompatActivity(),CameraXConfig.Provider {
             .requireLensFacing(CameraSelector.LENS_FACING_BACK)
             .build()
 
-        preview.setSurfaceProvider(previewView.getSurfaceProvider())
+        preview.setSurfaceProvider(previewView.surfaceProvider)
 
-        var camera = cameraProvider.bindToLifecycle(this as LifecycleOwner, cameraSelector, preview,imageCapture)
-        btn_take_photo.isEnabled = true
+        cameraProvider.bindToLifecycle(this as LifecycleOwner, cameraSelector, preview,imageCapture)
+        btnTakePhoto.isEnabled = true
     }
 
     private fun aspectRatio(width: Int, height: Int): Int {
@@ -159,23 +150,14 @@ class TakePhotoActivity : AppCompatActivity(),CameraXConfig.Provider {
 
     private fun captureImage(){
         imageCapture.let { imageCapture ->
-
-            // Create output file to hold the image
             val photoFile = createFile(outputDirectory, FILENAME, PHOTO_EXTENSION)
-
-            // Setup image capture metadata
             val metadata = ImageCapture.Metadata().apply {
-
-                // Mirror image when using the front camera
                 isReversedHorizontal = lensFacing == CameraSelector.LENS_FACING_FRONT
             }
-
-            // Create output options object which contains file + metadata
             val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile)
                 .setMetadata(metadata)
                 .build()
 
-            // Setup image capture listener which is triggered after photo has been taken
             imageCapture.takePicture(
                 outputOptions, cameraExecutor, object : ImageCapture.OnImageSavedCallback {
                     override fun onError(exc: ImageCaptureException) {
@@ -186,10 +168,7 @@ class TakePhotoActivity : AppCompatActivity(),CameraXConfig.Provider {
                         val savedUri = output.savedUri ?: Uri.fromFile(photoFile)
                         Log.d(TAG, "Photo capture succeeded: $savedUri")
 
-                        // We can only change the foreground Drawable using API level 23+ API
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                            // Update the gallery thumbnail with latest picture taken
-//                                setGalleryThumbnail(savedUri)
                             runOnUiThread {
                                 Glide.with(applicationContext)
                                     .load(savedUri)
@@ -221,16 +200,6 @@ class TakePhotoActivity : AppCompatActivity(),CameraXConfig.Provider {
                     }
                 })
 
-            // We can only change the foreground Drawable using API level 23+ API
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-
-                // Display flash animation to indicate that photo was captured
-//                    fragmentCameraBinding.root.postDelayed({
-//                        fragmentCameraBinding.root.foreground = ColorDrawable(Color.WHITE)
-//                        fragmentCameraBinding.root.postDelayed(
-//                            { fragmentCameraBinding.root.foreground = null }, ANIMATION_FAST_MILLIS)
-//                    }, ANIMATION_SLOW_MILLIS)
-            }
         }
     }
 

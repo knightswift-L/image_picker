@@ -58,9 +58,9 @@ class SelectImageActivity : AppCompatActivity(), OnSelectedChange {
         }
         btn_confirm.setOnClickListener{
             val data = Intent()
-            var temp = mutableListOf<String>()
+            var temp = arrayListOf<String>()
             temp.addAll(selected.map {it.uri })
-            data.putStringArrayListExtra("Image", temp as ArrayList<String>)
+            data.putStringArrayListExtra("Image", temp)
             setResult(RESULT_OK, data)
             finish()
         }
@@ -69,7 +69,7 @@ class SelectImageActivity : AppCompatActivity(), OnSelectedChange {
     private fun initRecyclerView(){
         recyclerView.layoutManager = GridLayoutManager(this,3)
         val width = getWindowWidth()
-        val imageWidth = width /3
+        val imageWidth = width / 3
         adapter = GridAdapter(this,selected,imageWidth)
         recyclerView.adapter = adapter
     }

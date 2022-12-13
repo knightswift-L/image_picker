@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:image_picker/model/SelectImageConfig.dart';
 
 void main() {
   runApp(const MyApp());
@@ -37,11 +38,12 @@ class _MyAppState extends State<MyApp> {
                 GestureDetector(
                   onTap: () async {
                     try {
-                      var images = await _imagePickerPlugin.pickImage();
+                      var config = SelectedImageConfig(cropOption: CropImageOption(aspectRatioX: 3,aspectRatioY: 4));
+                      var images = await _imagePickerPlugin.pickImage(config: config);
                       print("==========>${images?.join(",")}");
                       if (images != null && images.isNotEmpty) {
                         setState(() {
-                          image = images.first;
+                          image = images.first.path;
                         });
                       }
                     } catch (error) {
@@ -55,11 +57,12 @@ class _MyAppState extends State<MyApp> {
                 GestureDetector(
                   onTap: () async {
                     try {
-                      var images = await _imagePickerPlugin.takePhoto();
+                      var config = SelectedImageConfig(cropOption: CropImageOption(aspectRatioX: 3,aspectRatioY: 4));
+                      var images = await _imagePickerPlugin.takePhoto(config: config);
                       print("==========>${images?.join(",")}");
                       if (images != null && images.isNotEmpty) {
                         setState(() {
-                          image = images.first!;
+                          image = images.first.path!;
                         });
                       }
                     } catch (error) {
