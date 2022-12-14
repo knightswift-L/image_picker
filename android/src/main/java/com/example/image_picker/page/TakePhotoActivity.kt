@@ -36,6 +36,7 @@ class TakePhotoActivity : AppCompatActivity(),CameraXConfig.Provider {
     private lateinit var cameraProvider : ProcessCameraProvider
     private lateinit var previewView:PreviewView
     private lateinit var thumbnail:ImageView
+    private lateinit var switchCamera:ImageView
     private lateinit var btnTakePhoto: Button
     private lateinit var imageCapture:ImageCapture
     private lateinit var cameraExecutor: ExecutorService
@@ -71,6 +72,7 @@ class TakePhotoActivity : AppCompatActivity(),CameraXConfig.Provider {
         previewView = findViewById(R.id.previewView)
         btnTakePhoto = findViewById(R.id.take_photo)
         thumbnail = findViewById(R.id.thumbtail)
+        switchCamera = findViewById(R.id.switch_camera)
         btnTakePhoto.isEnabled = false
         cameraExecutor = Executors.newSingleThreadExecutor()
         outputDirectory = getOutputDirectory(this)
@@ -82,11 +84,36 @@ class TakePhotoActivity : AppCompatActivity(),CameraXConfig.Provider {
                     hasFrontCamera() -> CameraSelector.LENS_FACING_FRONT
                     else -> throw IllegalStateException("Back and front camera are unavailable")
                 }
+                updateCameraSwitchButton()
                 bindPreview(cameraProvider)
             }, ContextCompat.getMainExecutor(this))
         }
         btnTakePhoto.setOnClickListener{
             captureImage()
+        }
+        switchCamera.let{
+            it.isEnabled = false
+            it.setOnClickListener{
+            lensFacing = if(lensFacing == CameraSelector.LENS_FACING_BACK){
+                CameraSelector.LENS_FACING_FRONT
+            }else{
+                CameraSelector.LENS_FACING_BACK
+            }
+                bindPreview(cameraProvider)
+            }
+        }
+        thumbnail.setOnClickListener {
+            val intent = Intent(this,SelectImageActivity::class.java)
+            startActivity(intent)
+        }
+
+    }
+
+    private fun updateCameraSwitchButton() {
+        try {
+            switchCamera.isEnabled = hasBackCamera() && hasFrontCamera()
+        } catch (exception: CameraInfoUnavailableException) {
+            switchCamera.isEnabled = false
         }
     }
 
@@ -116,13 +143,12 @@ class TakePhotoActivity : AppCompatActivity(),CameraXConfig.Provider {
             .setTargetAspectRatio(targetAspectRation)
             .setTargetRotation(rotation)
             .build()
-
         var cameraSelector : CameraSelector = CameraSelector.Builder()
-            .requireLensFacing(CameraSelector.LENS_FACING_BACK)
+            .requireLensFacing(lensFacing)
             .build()
 
         preview.setSurfaceProvider(previewView.surfaceProvider)
-
+        cameraProvider.unbindAll()
         cameraProvider.bindToLifecycle(this as LifecycleOwner, cameraSelector, preview,imageCapture)
         btnTakePhoto.isEnabled = true
     }

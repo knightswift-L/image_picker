@@ -8,4 +8,8 @@ class EnLanguage:MultiLanguage {
     override fun getConfirm(): String {
         return "Confirm"
     }
+
+    override fun getCrop(): String {
+        return "Crop"
+    }
 }

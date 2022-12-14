@@ -43,14 +43,13 @@ class SelectImageUtil {
             file = File(targetPath)
             file.createNewFile()
             val bos = ByteArrayOutputStream()
-            Log.e("Test",bitmap.width.toString())
-            Log.e("Test",bitmap.height.toString())
             bitmap.compress(Bitmap.CompressFormat.JPEG, 0, bos)
             val bitmapdata = bos.toByteArray()
             val fos = FileOutputStream(file)
             fos.write(bitmapdata)
             fos.flush()
             fos.close()
+            bitmap.recycle()
         } catch (e: Exception) {
             return null;
         }

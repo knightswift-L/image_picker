@@ -10,6 +10,7 @@ import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.image_picker.model.CFile
+import com.example.image_picker.model.GlobalLanguage
 import com.example.image_picker.page.CropImageActivity
 import com.example.image_picker.page.SelectImageActivity
 import com.example.image_picker.page.TakePhotoActivity
@@ -71,6 +72,10 @@ class ImagePickerDelegate(private val activity:Activity) : ActivityResultListene
         val arguments:Map<String,String> =  methodCall.arguments as Map<String,String>
         if(arguments["maxQuality"] != null){
             maxQuality = arguments["maxQuality"]!!.toInt()
+        }
+
+        if(arguments["language"] != null){
+            GlobalLanguage.switch(arguments["language"] ?:"")
         }
 
         if(arguments["cropOption"] != null){

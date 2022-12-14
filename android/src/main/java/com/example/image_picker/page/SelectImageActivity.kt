@@ -1,6 +1,7 @@
 package com.example.image_picker.page
 
 import android.content.ContentUris
+import android.content.Context
 import android.content.Intent
 import android.content.res.Resources
 import android.net.Uri
@@ -12,17 +13,14 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.image_picker.R
+import com.example.image_picker.model.GlobalLanguage
 import com.example.image_picker.model.Image
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -34,10 +32,10 @@ interface OnSelectedChange{
     fun onSelect(position: Int)
 }
 class SelectImageActivity : AppCompatActivity(), OnSelectedChange {
-    lateinit var recyclerView: RecyclerView
-    lateinit var btn_cancel: TextView
-    lateinit var btn_confirm: TextView
-    lateinit var adapter: GridAdapter
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var cancelBtn: TextView
+    private lateinit var confirmBtn: TextView
+    private lateinit var adapter: GridAdapter
     var selected = mutableListOf<Image>()
     var address = arrayListOf<Image>()
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,17 +44,18 @@ class SelectImageActivity : AppCompatActivity(), OnSelectedChange {
         initView()
         initRecyclerView()
         queryMediaData()
-        Log.i("TEST","getMediaData End")
     }
 
     private fun initView(){
         recyclerView = findViewById(R.id.recyclerView)
-        btn_cancel = findViewById<Button>(R.id.cancel_select_image_button)
-        btn_confirm = findViewById<Button>(R.id.confirm_select_image_button)
-        btn_cancel.setOnClickListener{
+        cancelBtn = findViewById<Button>(R.id.cancel_select_image_button)
+        cancelBtn.text = GlobalLanguage.getCurrentLanguage().getCancel()
+        confirmBtn = findViewById<Button>(R.id.confirm_select_image_button)
+        confirmBtn.text = GlobalLanguage.getCurrentLanguage().getConfirm()
+        cancelBtn.setOnClickListener{
             finish()
         }
-        btn_confirm.setOnClickListener{
+        confirmBtn.setOnClickListener{
             val data = Intent()
             var temp = arrayListOf<String>()
             temp.addAll(selected.map {it.uri })
@@ -70,7 +69,7 @@ class SelectImageActivity : AppCompatActivity(), OnSelectedChange {
         recyclerView.layoutManager = GridLayoutManager(this,3)
         val width = getWindowWidth()
         val imageWidth = width / 3
-        adapter = GridAdapter(this,selected,imageWidth)
+        adapter = GridAdapter(this,this,selected,imageWidth)
         recyclerView.adapter = adapter
     }
 
@@ -94,8 +93,7 @@ class SelectImageActivity : AppCompatActivity(), OnSelectedChange {
                 MediaStore.Images.Media.HEIGHT,
             )
 
-            val selection = (MediaStore.Images.Media.MIME_TYPE + "=? or "
-                    + MediaStore.Images.Media.MIME_TYPE + "=?")
+            val selection = (MediaStore.Images.Media.MIME_TYPE + "=? or " + MediaStore.Images.Media.MIME_TYPE + "=?")
             val selectionArgs = arrayOf("image/jpeg", "image/png")
 
             val sortOrder = "${MediaStore.Images.Media.DATE_ADDED} ASC"
@@ -142,12 +140,12 @@ class SelectImageActivity : AppCompatActivity(), OnSelectedChange {
         }
     }
 
-    inner class GridAdapter(var onChange: OnSelectedChange, temp:List<Image>, val itemWidth:Int): RecyclerView.Adapter<ViewHolder>() {
+    inner class GridAdapter(val context:Context, var onChange: OnSelectedChange, temp:List<Image>, val itemWidth:Int): RecyclerView.Adapter<ViewHolder>() {
         private var selected:MutableList<Image> = temp.toMutableList()
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             var type = ImageView.ScaleType.CENTER_CROP
-            val params = LinearLayout.LayoutParams(
+            val params = FrameLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT
             )
@@ -159,6 +157,11 @@ class SelectImageActivity : AppCompatActivity(), OnSelectedChange {
             holder.checkBox.setImageResource(R.drawable.check)
             if(selected.contains(address[position])){
                 holder.checkBox.setImageResource(R.drawable.checked)
+            }
+            holder.container.setOnClickListener{
+                val intent = Intent(context,PreViewActivity::class.java)
+                intent.putExtra("Image",address[position].uri)
+                context.startActivity(intent)
             }
             holder.checkBox.setOnClickListener{
                 if(selected.contains(address[position])){
@@ -188,7 +191,7 @@ class SelectImageActivity : AppCompatActivity(), OnSelectedChange {
     inner class  ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var imageView: ImageView = itemView.findViewById(R.id.target_image)
         var checkBox :ImageView = itemView.findViewById(R.id.checkbox)
-        var container : ConstraintLayout = itemView.findViewById(R.id.image_container)
+        var container : FrameLayout = itemView.findViewById(R.id.image_container)
     }
 
     override fun onSelect(position: Int) {
