@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.image_picker" >
+    package="com.example.image_picker">
     <!--
          Required only if your app needs to access images or photos
          that other apps created.
@@ -27,28 +27,29 @@
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="29" />
 
-    <application android:theme="@style/Theme.AppCompat.NoActionBar" >
+    <application android:theme="@style/Theme.AppCompat.NoActionBar">
         <activity
-            android:name=".CropImageActivity"
-            android:exported="false" >
+            android:name=".page.PreViewActivity"
+            android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
             android:name=".page.TakePhotoActivity"
-            android:exported="false" >
+            android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
             android:name=".page.SelectImageActivity"
-            android:exported="false" >
+            android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
+        <activity android:name=".page.CropImageActivity" />
     </application>
 
 </manifest>

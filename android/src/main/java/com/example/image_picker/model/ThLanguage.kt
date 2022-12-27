@@ -1,15 +1,15 @@
 package com.example.image_picker.model
 
-class EnLanguage:MultiLanguage {
+class ThLanguage:MultiLanguage {
     override fun getCancel(): String {
-        return "Cancel"
+        return "ยกเลิก"
     }
 
     override fun getConfirm(): String {
-        return "Confirm"
+        return "ยืนยัน"
     }
 
     override fun getCrop(): String {
-        return "Crop"
+        TODO("Not yet implemented")
     }
 }

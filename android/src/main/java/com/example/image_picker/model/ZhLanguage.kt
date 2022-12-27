@@ -8,4 +8,8 @@ class ZhLanguage :MultiLanguage {
     override fun getConfirm(): String {
         return "确认"
     }
+
+    override fun getCrop(): String {
+        return "剪切"
+    }
 }

@@ -1,7 +1,8 @@
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 import 'image_picker_method_channel.dart';
-
+import './model/SelectImageConfig.dart';
+import './model/XFile.dart';
 abstract class ImagePickerPlatform extends PlatformInterface {
   /// Constructs a ImagePickerPlatform.
   ImagePickerPlatform() : super(token: _token);
@@ -23,11 +24,11 @@ abstract class ImagePickerPlatform extends PlatformInterface {
     _instance = instance;
   }
 
-  Future<List<String>?> takePhoto() {
+  Future<List<XFile>> takePhoto({SelectedImageConfig? config}) {
     throw UnimplementedError('platformVersion() has not been implemented.');
   }
 
-  Future<List<String>?> pickImage() {
+  Future<List<XFile>> pickImage({SelectedImageConfig? config}) {
     throw UnimplementedError('platformVersion() has not been implemented.');
   }
 }
